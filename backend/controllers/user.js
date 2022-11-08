@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 exports.signup = (req, res, next) => {
-  User.validate({ email: req.body.email, password: req.body.password })
+  const { user } = req.body;
+  User.validate(user)
     .then(() => {
       bcrypt
         .hash(req.body.password, 10)
@@ -26,7 +27,8 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  User.validate({ email: req.body.email, password: req.body.password })
+  const { user } = req.body;
+  User.validate(user)
     .then(() => {
       User.findOne({ email: req.body.email })
         .then((user) => {
@@ -57,6 +59,7 @@ exports.login = (req, res, next) => {
         });
     })
     .catch((error) => {
+      console.log("test");
       res.status(400).json({ error });
     });
 };

@@ -26,31 +26,37 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  User.findOne({ email: req.body.email })
-    .then((user) => {
-      if (user === null) {
-        res.status(401).json({ message: "Incorrect login/password pair" });
-      } else {
-        bcrypt
-          .compare(req.body.password, user.password)
-          .then((valid) => {
-            if (!valid) {
-              res.status(401).json({ message: "Incorrect login/password pair" });
-            } else {
-              res.status(200).json({
-                userId: user._id,
-                token: jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, {
-                  expiresIn: "24h",
-                }),
+  User.validate({ email: req.body.email, password: req.body.password })
+    .then(() => {
+      User.findOne({ email: req.body.email })
+        .then((user) => {
+          if (user === null) {
+            res.status(401).json({ message: "Incorrect login/password pair" });
+          } else {
+            bcrypt
+              .compare(req.body.password, user.password)
+              .then((valid) => {
+                if (!valid) {
+                  res.status(401).json({ message: "Incorrect login/password pair" });
+                } else {
+                  res.status(200).json({
+                    userId: user._id,
+                    token: jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, {
+                      expiresIn: "24h",
+                    }),
+                  });
+                }
+              })
+              .catch((error) => {
+                res.status(500).json({ error });
               });
-            }
-          })
-          .catch((error) => {
-            res.status(500).json({ error });
-          });
-      }
+          }
+        })
+        .catch((error) => {
+          res.status(500).json({ error });
+        });
     })
     .catch((error) => {
-      res.status(500).json({ error });
+      res.status(400).json({ error });
     });
 };

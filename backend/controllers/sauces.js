@@ -23,6 +23,10 @@ exports.createSauce = (req, res, next) => {
         });
     })
     .catch((error) => {
+      const oldImage = sauce.imageUrl.split("/images/")[1];
+
+      fs.unlink(`images/${oldImage}`, () => {});
+
       res.status(400).json({ message: error.message });
     });
 };
@@ -58,6 +62,10 @@ exports.modifySauce = (req, res, next) => {
         });
     })
     .catch((error) => {
+      if (req.file) {
+        const oldImage = req.body.sauce.imageUrl.split("/images/")[1];
+        fs.unlink(`images/${oldImage}`, () => {});
+      }
       res.status(400).json({ message: error.message });
     });
 };

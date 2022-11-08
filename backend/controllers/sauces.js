@@ -8,18 +8,22 @@ exports.createSauce = (req, res, next) => {
   const sauce = new Sauce({
     ...sauceObject,
     userId: req.auth.userId,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${
-      req.file.filename
-    }`,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
   });
 
-  sauce
-    .save()
+  Sauce.validate(sauce)
     .then(() => {
-      res.status(201).json({ message: "Sauce saved !" });
+      sauce
+        .save()
+        .then(() => {
+          res.status(201).json({ message: "Sauce saved !" });
+        })
+        .catch((error) => {
+          res.status(400).json({ error });
+        });
     })
     .catch((error) => {
-      res.status(400).json({ error });
+      res.status(400).json({ message: error.message });
     });
 };
 
@@ -27,32 +31,34 @@ exports.modifySauce = (req, res, next) => {
   const sauceObject = req.file
     ? {
         ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${
-          req.file.filename
-        }`,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
       }
     : { ...req.body };
 
   delete sauceObject._userId;
-  Sauce.findOne({ _id: req.params.id })
-    .then((sauce) => {
-      if (sauce.userId != req.auth.userId) {
-        res.status(403).json({ message: "unauthorized request." });
-      } else {
-        const oldImage = sauce.imageUrl.split("/images/")[1];
-        if (req.file) {
-          fs.unlink(`images/${oldImage}`, () => {});
-        }
-        Sauce.updateOne(
-          { _id: req.params.id },
-          { ...sauceObject, _id: req.params.id }
-        )
-          .then(() => res.status(200).json({ message: "Sauce modified !" }))
-          .catch((error) => res.status(401).json({ error }));
-      }
+
+  Sauce.validate(sauceObject)
+    .then(() => {
+      Sauce.findOne({ _id: req.params.id })
+        .then((sauce) => {
+          if (sauce.userId != req.auth.userId) {
+            res.status(403).json({ message: "unauthorized request." });
+          } else {
+            const oldImage = sauce.imageUrl.split("/images/")[1];
+            if (req.file) {
+              fs.unlink(`images/${oldImage}`, () => {});
+            }
+            Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+              .then(() => res.status(200).json({ message: "Sauce modified !" }))
+              .catch((error) => res.status(401).json({ error }));
+          }
+        })
+        .catch((error) => {
+          res.status(400).json({ error });
+        });
     })
     .catch((error) => {
-      res.status(400).json({ error });
+      res.status(400).json({ message: error.message });
     });
 };
 

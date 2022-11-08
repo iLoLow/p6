@@ -3,8 +3,20 @@ const MongooseErrors = require("mongoose-errors");
 const uniqueValidator = require("mongoose-unique-validator");
 
 const userSchema = mongoose.Schema({
-  email: { type: String, require: true, unique: true },
-  password: { type: String, require: true },
+  email: {
+    type: String,
+    require: true,
+    unique: true,
+    match: [/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g, "incorrect email format"],
+  },
+  password: {
+    type: String,
+    require: true,
+    match: [
+      /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,30})/g,
+      "Ensure that password is 8 to 30 characters long and contains a mix of upper and lower case characters, one numeric and one special character",
+    ],
+  },
 });
 
 userSchema.plugin(uniqueValidator);

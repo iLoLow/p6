@@ -9,7 +9,7 @@ const saucesSchema = mongoose.Schema({
     trim: true,
     minLength: [3, "name length 3 characters min"],
     maxLength: [30, "name length 3 characters min"],
-    match: [/^[a-zA-Z\s\']+$/g, "error"],
+    match: [/^[a-zA-Z\s\']+$/g, "letter only and symbole : ' "],
   },
   manufacturer: {
     type: String,
@@ -17,7 +17,7 @@ const saucesSchema = mongoose.Schema({
     trim: true,
     minLength: [3, "manufacturer length 3 characters min"],
     maxLength: [30, "manufacturer length 30 characters max"],
-    match: [/^[a-zA-Z\s\']+$/g, "error"],
+    match: [/^[a-zA-Z\s\']+$/g, "letter only and symbole : ' "],
   },
   description: {
     type: String,
@@ -25,7 +25,7 @@ const saucesSchema = mongoose.Schema({
     trim: true,
     minLength: [3, "description length 3 characters min"],
     maxLength: [50, "description length 50 characters max"],
-    match: [/^[a-zA-Z0-9\s\']+$/g, "error"],
+    match: [/^[a-zA-Z0-9\s\']+$/g, "letter only and symbole : ' "],
   },
   mainPepper: {
     type: String,
@@ -33,7 +33,7 @@ const saucesSchema = mongoose.Schema({
     trim: true,
     minLength: [3, "Main Pepper Ingredient length 3 characters min"],
     maxLength: [30, "Main Pepper Ingredient length 30 characters max"],
-    match: [/^[a-zA-Z\s\']+$/g, "error"],
+    match: [/^[a-zA-Z\s\']+$/g, "letter only and symbole : ' "],
   },
   imageUrl: { type: String },
   heat: { type: Number, required: true },

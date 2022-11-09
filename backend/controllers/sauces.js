@@ -63,7 +63,7 @@ exports.modifySauce = (req, res, next) => {
     })
     .catch((error) => {
       if (req.file) {
-        const oldImage = req.body.sauce.imageUrl.split("/images/")[1];
+        const oldImage = sauceObject.imageUrl.split("/images/")[1];
         fs.unlink(`images/${oldImage}`, () => {});
       }
       res.status(400).json({ message: error.message });

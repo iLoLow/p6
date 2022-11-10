@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
-
+// singup user
 exports.signup = (req, res, next) => {
   const { user } = req.body;
   User.validate(user)
@@ -25,7 +25,7 @@ exports.signup = (req, res, next) => {
       res.status(400).json({ error });
     });
 };
-
+//login user
 exports.login = (req, res, next) => {
   const { user } = req.body;
   User.validate(user)

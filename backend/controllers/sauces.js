@@ -1,6 +1,7 @@
 const Sauce = require("../models/Sauce");
 const fs = require("fs");
 
+//create sauce
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
@@ -10,7 +11,7 @@ exports.createSauce = (req, res, next) => {
     userId: req.auth.userId,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
   });
-
+  //validate form
   Sauce.validate(sauce)
     .then(() => {
       sauce
@@ -30,7 +31,7 @@ exports.createSauce = (req, res, next) => {
       res.status(400).json({ message: error.message });
     });
 };
-
+//mofify sauce
 exports.modifySauce = (req, res, next) => {
   const sauceObject = req.file
     ? {
@@ -40,7 +41,7 @@ exports.modifySauce = (req, res, next) => {
     : { ...req.body };
 
   delete sauceObject._userId;
-
+  //validate form
   Sauce.validate(sauceObject)
     .then(() => {
       Sauce.findOne({ _id: req.params.id })
@@ -69,7 +70,7 @@ exports.modifySauce = (req, res, next) => {
       res.status(400).json({ message: error.message });
     });
 };
-
+//delete sauce
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
@@ -90,19 +91,19 @@ exports.deleteSauce = (req, res, next) => {
       res.status(500).json({ error });
     });
 };
-
+//display one sauce
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
 };
-
+//displau all sauce
 exports.getAllSauces = (req, res, next) => {
   Sauce.find()
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(400).json({ error }));
 };
-
+//like and disllike sauce
 exports.likeSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {

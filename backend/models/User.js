@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
     type: String,
     require: true,
     unique: true,
+    //regex mail
     match: [/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g, "incorrect email format"],
   },
   password: {
@@ -18,8 +19,9 @@ const userSchema = mongoose.Schema({
     ],
   },
 });
-
+//unique validator for email
 userSchema.plugin(uniqueValidator);
+//mongoose errors
 userSchema.plugin(MongooseErrors);
 
 module.exports = mongoose.model("User", userSchema);
